@@ -43,18 +43,12 @@ int main()
     FILE *fptr;
     fptr = fopen("hw1_output.txt", "w"); // open file
 
-    int a = calculate_multiple(arr1[0], arr2[0]);
-    int b = calculate_multiple(arr1[1], arr2[1]);
-    int c = calculate_multiple(arr1[2], arr2[2]);
-
-    fprintf(fptr, "value of arr1[0]*arr2[0]: %d\n", a);
-    odd_even(a, fptr);
-
-    fprintf(fptr, "value of arr1[1]*arr2[1]: %d\n", b);
-    odd_even(b, fptr);
-
-    fprintf(fptr, "value of arr1[2]*arr2[2]: %d\n", c);
-    odd_even(c, fptr);
+    for (int i = 0; i < size; i++)
+    {
+        int a = calculate_multiple(arr1[i], arr2[i]);
+        fprintf(fptr, "value of arr1[%d]*arr2[%d]: %d\n", i, i, a);
+        odd_even(a, fptr);
+    }
 
     fclose(fptr); // close file
 
