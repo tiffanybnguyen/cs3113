@@ -9,34 +9,92 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define SHMKEY 1234    // Define SHMKEY with an appropriate value
+#define IPC_CREAT 1234 // Define SHMKEY with an appropriate value
+
+int process1();
+int process2();
+int process3();
+int process4();
+
 int main()
 {
-    pid_t p = fork();
-    pid_t q = fork();
+    int shmid, pid1, pid2, pid3, pid4, ID, status;
+    char *shmadd;
+    shmadd = (char *)0;
 
-    // checking if fork worked
-    if (p < 0)
+    // shared memory
+    typedef struct
     {
-        fprintf(stderr, "Fork failed\n");
-        return 1;
-    }
-    // for the child process
-    else if (p == 0)
+        int value;
+    } shared_mem;
+
+    shared_mem *total;
+
+    // create processes
+    if ((pid1 = fork()) == 0)
     {
-    }
-    // for the other child process
-    else if (q == 0)
-    {
-    }
-    // for the parent process
-    else
-    {
-        wait(NULL);
-        printf("Child process complete.\n");
+        process1();
     }
 
-    printf("This is the pid of the process: %d\n", p);
-    printf("Hello world!, pid = %d \n", getpid());
+    // create and connect to a shared memory segment
+    if ((shmid = shmget(SHMKEY, sizeof(int), IPC_CREAT | 0666)) < 0)
+    {
+        perror("shmget");
+        exit(1);
+    }
 
+    if ((total = (shared_mem *)shmat(shmid, shmadd, 0)) == (shared_mem *)-1)
+    {
+        perror("shmat");
+        exit(0);
+    }
+
+    return 0;
+
+    /*
+    //parent wait for child processes to finish and print ID of each child in three ways
+        wait(&status);
+        wait (NULL);
+        waitpid(pid1, NULL, 0);
+        printf("Child with pid %d has just exited .\n", pid1);
+    */
+
+    /*
+    Notes:
+     - process1 increases the value of shared variable "total" * by some number
+
+     - if you did not remove your shared memory segmetnts (e.g. program crashes before the execution of shmctl()), they will be in the
+       system forever. This will degrade the system performance.
+     - use the ipcs command to check if you have shared memory segments left in the system
+     - use the ipcrm command to removed your shared memory segments
+
+    Procedure for Using Shared Memory
+     - find a key: Unix uses this key for idenitfying shared memory segments
+     - use shmget() to allocate shared memory
+     - use shmat() to attach a shared memory to an address space
+     - use shmdt() to detatch a shared memory from an address space
+     - use scmctl() to deallocate a shared memory
+
+    */
+}
+
+int process1()
+{
+    return 0;
+}
+
+int process2()
+{
+    return 0;
+}
+
+int process3()
+{
+    return 0;
+}
+
+int process4()
+{
     return 0;
 }
