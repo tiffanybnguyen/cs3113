@@ -1,6 +1,6 @@
 /**
  * Name: Tiffany Nguyen
- * GPEL Username: gpel13.cs.nor.ou.edu -l nguy0850 (?)
+ * GPEL Username: gpel13.cs.nor.ou.edu -l nguy0850
  */
 
 #include <stdio.h>
@@ -9,13 +9,21 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/ipc.h>
+#include <sys/wait.h>
+#include <sys/shm.h>
 
-#define SHMKEY ((key_t)1497) // Define SHMKEY with an appropriate value
+#define SHMKEY ((key_t)1497) // global SHMKEY yipee
 
-int process1();
-int process2();
-int process3();
-int process4();
+// shared memory
+typedef struct
+{
+    int value;
+} shared_mem;
+
+int process1(shared_mem *total);
+int process2(shared_mem *total);
+int process3(shared_mem *total);
+int process4(shared_mem *total);
 
 int main()
 {
@@ -23,19 +31,7 @@ int main()
     char *shmadd;
     shmadd = (char *)0;
 
-    // shared memory
-    typedef struct
-    {
-        int value;
-    } shared_mem;
-
     shared_mem *total;
-
-    // create processes
-    if ((pid1 = fork()) == 0)
-    {
-        process1();
-    }
 
     // create and connect to a shared memory segment
     // allocates shared memory
@@ -52,7 +48,40 @@ int main()
         exit(0);
     }
 
-    // add stuff here
+    // initialize shared memory
+    total->value = 0;
+
+    // fork for the 4 child processes
+    if ((pid1 = fork()) == 0)
+    {
+        process1(total);
+        exit(0);
+    }
+
+    if ((pid2 = fork()) == 0)
+    {
+        process2(total);
+        exit(0);
+    }
+
+    if ((pid3 = fork()) == 0)
+    {
+        process3(total);
+        exit(0);
+    }
+
+    if ((pid4 = fork()) == 0)
+    {
+        process4(total);
+        exit(0);
+    }
+
+    // parent process waiting for each child to finish
+    for (int i = 0; i < 4; ++i)
+    {
+        int pid = wait(NULL);
+        printf("Child with ID %d has just exited.\n", pid);
+    }
 
     // detatch shared memory
     if (shmdt(total) == -1)
@@ -68,51 +97,46 @@ int main()
         exit(-1);
     }
 
-    return 0;
-
-    /*
-    //parent wait for child processes to finish and print ID of each child in three ways
-        wait(&status);
-        wait (NULL);
-        waitpid(pid1, NULL, 0);
-        printf("Child with pid %d has just exited .\n", pid1);
-    */
-
-    /*
-    Notes:
-     - process1 increases the value of shared variable "total" * by some number
-
-     - if you did not remove your shared memory segmetnts (e.g. program crashes before the execution of shmctl()), they will be in the
-       system forever. This will degrade the system performance.
-     - use the ipcs command to check if you have shared memory segments left in the system
-     - use the ipcrm command to removed your shared memory segments
-
-    Procedure for Using Shared Memory
-     - find a key: Unix uses this key for idenitfying shared memory segments
-     - use shmget() to allocate shared memory
-     - use shmat() to attach a shared memory to an address space
-     - use shmdt() to detatch a shared memory from an address space
-     - use scmctl() to deallocate a shared memory
-
-    */
-}
-
-int process1()
-{
+    printf("End of Program\n");
     return 0;
 }
 
-int process2()
+int process1(shared_mem *total)
 {
+    for (int i = 0; i < 100000; ++i)
+    {
+        total->value += 1;
+    }
+    printf("From process 1: counter = %d\n", total->value);
     return 0;
 }
 
-int process3()
+int process2(shared_mem *total)
 {
+    for (int i = 0; i < 200000; ++i)
+    {
+        total->value += 1;
+    }
+    printf("From process 2: counter = %d\n", total->value);
     return 0;
 }
 
-int process4()
+int process3(shared_mem *total)
 {
+    for (int i = 0; i < 300000; ++i)
+    {
+        total->value += 1;
+    }
+    printf("From process 3: counter = %d\n", total->value);
+    return 0;
+}
+
+int process4(shared_mem *total)
+{
+    for (int i = 0; i < 500000; ++i)
+    {
+        total->value += 1;
+    }
+    printf("From process 4: counter = %d\n", total->value);
     return 0;
 }
