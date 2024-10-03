@@ -9,8 +9,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/ipc.h>
+#include <sys/wait.h>
 
-#define SHMKEY ((key_t)1497) // Define SHMKEY with an appropriate value
+#define SHMKEY ((key_t)1497) // Define global SHMKEY
 
 int process1();
 int process2();
@@ -31,12 +32,6 @@ int main()
 
     shared_mem *total;
 
-    // create processes
-    if ((pid1 = fork()) == 0)
-    {
-        process1();
-    }
-
     // create and connect to a shared memory segment
     // allocates shared memory
     if ((shmid = shmget(SHMKEY, sizeof(int), IPC_CREAT | 0666)) < 0)
@@ -53,6 +48,25 @@ int main()
     }
 
     // add stuff here
+    // create processes
+    // if ((pid1 = fork()) == 0)
+    // {
+    //     process1();
+    // }
+
+    for (int i = 0; i < 4; ++i)
+    {
+        pid_t pid = fork();
+        if (pid == 0)
+        {
+        }
+    }
+
+    for (int i = 0; i < 4; ++i)
+    {
+        pid_t pid = wait(NULL);
+        printf("Process %d is terminated.\n", pid);
+    }
 
     // detatch shared memory
     if (shmdt(total) == -1)
@@ -99,20 +113,24 @@ int main()
 
 int process1()
 {
+    exit(0);
     return 0;
 }
 
 int process2()
 {
+    exit(0);
     return 0;
 }
 
 int process3()
 {
+    exit(0);
     return 0;
 }
 
 int process4()
 {
+    exit(0);
     return 0;
 }
