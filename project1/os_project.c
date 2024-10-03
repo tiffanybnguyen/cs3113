@@ -8,9 +8,9 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/ipc.h>
 
-#define SHMKEY 1234    // Define SHMKEY with an appropriate value
-#define IPC_CREAT 1234 // Define SHMKEY with an appropriate value
+#define SHMKEY ((key_t)1497) // Define SHMKEY with an appropriate value
 
 int process1();
 int process2();
@@ -38,7 +38,7 @@ int main()
     }
 
     // create and connect to a shared memory segment
-    //allocates shared memory
+    // allocates shared memory
     if ((shmid = shmget(SHMKEY, sizeof(int), IPC_CREAT | 0666)) < 0)
     {
         perror("shmget");
@@ -50,6 +50,22 @@ int main()
     {
         perror("shmat");
         exit(0);
+    }
+
+    // add stuff here
+
+    // detatch shared memory
+    if (shmdt(total) == -1)
+    {
+        perror("shmdt");
+        exit(-1);
+    }
+
+    // remove shared memory
+    if (shmctl(shmid, IPC_RMID, (struct shmid_ds *)0) == -1)
+    {
+        perror("shmctl");
+        exit(-1);
     }
 
     return 0;
