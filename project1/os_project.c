@@ -38,12 +38,14 @@ int main()
     }
 
     // create and connect to a shared memory segment
+    //allocates shared memory
     if ((shmid = shmget(SHMKEY, sizeof(int), IPC_CREAT | 0666)) < 0)
     {
         perror("shmget");
         exit(1);
     }
 
+    // attaches to shared memory
     if ((total = (shared_mem *)shmat(shmid, shmadd, 0)) == (shared_mem *)-1)
     {
         perror("shmat");
