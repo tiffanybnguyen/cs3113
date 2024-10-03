@@ -1,6 +1,6 @@
 /**
  * Name: Tiffany Nguyen
- * GPEL Username: gpel13.cs.nor.ou.edu -l nguy0850
+ * GPEL Username: gpel13@cs.nor.ou.edu -l nguy0850
  */
 
 #include <stdio.h>
@@ -27,11 +27,11 @@ int process4(shared_mem *total);
 
 int main()
 {
-    int shmid, pid1, pid2, pid3, pid4, ID, status;
+    int shmid, pid1, pid2, pid3, pid4, ID, status; // initializing the stuffs
     char *shmadd;
     shmadd = (char *)0;
 
-    shared_mem *total;
+    shared_mem *total; // pointer for shared memory !!
 
     // create and connect to a shared memory segment
     // allocates shared memory
@@ -101,6 +101,7 @@ int main()
     return 0;
 }
 
+// methods for processes; each process increments the shared memory value while the value is under a specific limit
 int process1(shared_mem *total)
 {
     for (int i = 0; i < 100000; ++i)
