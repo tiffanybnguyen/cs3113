@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/ipc.h>
@@ -41,15 +40,12 @@ int main()
         exit(1);
     }
 
-    // attaches to shared memory
+    // attaches to shared memory and initializes shared memory
     if ((total = (shared_mem *)shmat(shmid, shmadd, 0)) == (shared_mem *)-1)
     {
         perror("shmat");
         exit(0);
     }
-
-    // initialize shared memory
-    total->value = 0;
 
     // fork for the 4 child processes
     if ((pid1 = fork()) == 0)
