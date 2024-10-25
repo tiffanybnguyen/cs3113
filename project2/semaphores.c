@@ -9,6 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include <sys/wait.h>
 
 #define SEMKEY ((key_t)400L) // semaphore key
 #define NSEMS 1              // number of semaphores being created
@@ -115,15 +116,6 @@ int process4(shared_mem *total)
     printf("From process 4: counter = %d\n", total->value);
     return 0;
 }
-
-/*
-In this assignment, a memory location is shared by four processes. Each process independently
-tries to increase the content of the shared memory location from 1 to a certain value by increments
-of one. Process 1 has a target of 100000, Process 2’s target is 200000, Process 3 has a target of
-300000, and the goal of Process 4 is 500000. When the program terminates, therefore, the shared
-memory variable will have a total of 1100000 (i.e., this value will be printed by whichever of the
-four processes finishes last).
-*/
 
 int main()
 {
