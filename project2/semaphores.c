@@ -120,7 +120,6 @@ int process4(shared_mem *total)
 int main()
 {
     int value, value1;
-    // semunion semctl_arg;
     semctl_arg.val = 1;
 
     int shmid, pid1, pid2, pid3, pid4, ID, status;
