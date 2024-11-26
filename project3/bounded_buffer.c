@@ -84,7 +84,7 @@ void *consumer(void *param)
 
         printf("%c", newChar); // used to debug
         fflush(stdout);
-        sleep(0.5); // so consumer will run slower than producer
+        sleep(1); // so consumer will run slower than producer
     }
 }
 
