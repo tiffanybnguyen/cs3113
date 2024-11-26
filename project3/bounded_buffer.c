@@ -116,6 +116,8 @@ int main()
     sem_destroy(&full);
     sem_destroy(&mutex);
 
+    printf("\n");
+
     return 0;
 }
 
