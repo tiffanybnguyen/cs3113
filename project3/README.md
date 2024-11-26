@@ -3,7 +3,7 @@ A circular buffer with 15 positions (each position stores 1 character) is to be 
 
 # How to Compile the Program
 1. go to file location
-2. write ```gcc bounded_buffer.c -lpthread -lrt bounded_buffer -o bounded_buffer``` into the terminal 
+2. write ```gcc bounded_buffer.c -lpthread -lrt -o bounded_buffer``` into the terminal 
 3. write ```./bounded_buffer``` into the terminal
 4. run it several times and observe.
 5. yay!! :3
